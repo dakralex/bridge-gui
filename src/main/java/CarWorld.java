@@ -14,18 +14,18 @@ class CarWorld extends JPanel {
     ArrayList<Car> redCars = new ArrayList<Car>();
 
     public CarWorld() {
-        controller = new TrafficControllerEmpty(new TrafficRegistrarEmpty());
+        controller = new TrafficControllerSimple(new TrafficRegistrarEmpty());
         //controller = new TrafficControllerSimple(new TrafficRegistrarEmpty());
         //controller = new TrafficControllerFair(new TrafficRegistrarEmpty());
 
         MediaTracker mt = new MediaTracker(this);
         Toolkit toolkit = Toolkit.getDefaultToolkit();
 
-        redCar = toolkit.getImage("image/redcar.gif");
+        redCar = toolkit.getImage(ClassLoader.getSystemResource("image/redcar.gif"));
         mt.addImage(redCar, 0);
-        blueCar = toolkit.getImage("image/bluecar.gif");
+        blueCar = toolkit.getImage(ClassLoader.getSystemResource("image/bluecar.gif"));
         mt.addImage(blueCar, 1);
-        bridge = toolkit.getImage("image/bridge.gif");
+        bridge = toolkit.getImage(ClassLoader.getSystemResource("image/bridge.gif"));
         mt.addImage(bridge, 2);
 
         try {
