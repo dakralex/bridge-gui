@@ -1,10 +1,45 @@
+/**
+ * @author Daniel Kral
+ * @id 11908284
+ */
+
+/**
+ * TrafficController is the interface that defines abstract methods for controlling access to the bridge. Its
+ * implementations of this interface act as monitors to ensure that only one vehicle can pass the bridge at a time and
+ * all other vehicles have to wait until the bridge is free again.
+ */
 public interface TrafficController {
-    void enterRight(Vehicle v); // only returns if bridge is empty; blocks otherwise
 
-    void enterLeft(Vehicle v);  // only returns if bridge is empty; blocks otherwise
+    /**
+     * Makes the vehicle v from the left-hand side of the bridge enter.
+     * <p>
+     * This method will return iff the bridge is empty and may block otherwise.
+     *
+     * @param v vehicle to enter from the left-hand side
+     */
+    void enterLeft(Vehicle v);
 
-    void leaveLeft(Vehicle v);  // must be called after enterRight
+    /**
+     * Makes the vehicle v from the right-hand side of the bridge enter.
+     * <p>
+     * This method will return iff the bridge is empty and may block otherwise.
+     *
+     * @param v vehicle to enter from the right-hand side
+     */
+    void enterRight(Vehicle v);
 
-    void leaveRight(Vehicle v); // must be called after enterLeft
+    /**
+     * Makes the vehicle v from the left-hand side of the bridge leave.
+     *
+     * @param v vehicle to leave from the left-hand side
+     */
+    void leaveLeft(Vehicle v);
+
+    /**
+     * Makes the vehicle v from the right-hand side of the bridge leave.
+     *
+     * @param v vehicle to leave from the right-hand side
+     */
+    void leaveRight(Vehicle v);
 
 }

@@ -15,7 +15,6 @@ class CarWorld extends JPanel {
 
     public CarWorld() {
         controller = new TrafficControllerSimple(new TrafficRegistrarEmpty());
-        //controller = new TrafficControllerSimple(new TrafficRegistrarEmpty());
         //controller = new TrafficControllerFair(new TrafficRegistrarEmpty());
 
         MediaTracker mt = new MediaTracker(this);
