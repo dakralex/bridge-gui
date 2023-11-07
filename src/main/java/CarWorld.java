@@ -1,65 +1,85 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serial;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 class CarWorld extends JPanel {
+
+    private static final Logger Log = Logger.getLogger(CarWorld.class.getSimpleName());
+
+    @Serial
     private static final long serialVersionUID = 1L;
-    Image bridge;
-    Image redCar;
-    Image blueCar;
+    private static final int LEFT_CAR_IMAGE_ID = 0;
+    private static final int RIGHT_CAR_IMAGE_ID = 1;
+    private static final int BRIDGE_IMAGE_ID = 2;
 
-    TrafficController controller;
+    private final Image bridgeImage;
+    private final Image leftCarImage;
+    private final Image rightCarImage;
 
-    ArrayList<Car> blueCars = new ArrayList<Car>();
-    ArrayList<Car> redCars = new ArrayList<Car>();
+    private final TrafficController controller;
 
-    public CarWorld() {
-        //controller = new TrafficControllerSimple(new TrafficRegistrarLogger());
-        controller = new TrafficControllerFair(new TrafficRegistrarLogger());
-        //controller = new TrafficController2RightCars(new TrafficRegistrarLogger());
+    private final ArrayList<Car> rightCars = new ArrayList<>(5);
+    private final ArrayList<Car> leftCars = new ArrayList<>(5);
+
+    CarWorld(TrafficController controller) {
+        this.controller = controller;
 
         MediaTracker mt = new MediaTracker(this);
         Toolkit toolkit = Toolkit.getDefaultToolkit();
 
-        redCar = toolkit.getImage(ClassLoader.getSystemResource("image/redcar.gif"));
-        mt.addImage(redCar, 0);
-        blueCar = toolkit.getImage(ClassLoader.getSystemResource("image/bluecar.gif"));
-        mt.addImage(blueCar, 1);
-        bridge = toolkit.getImage(ClassLoader.getSystemResource("image/bridge.gif"));
-        mt.addImage(bridge, 2);
+        leftCarImage = toolkit.getImage(ClassLoader.getSystemResource("image/redcar.gif"));
+        rightCarImage = toolkit.getImage(ClassLoader.getSystemResource("image/bluecar.gif"));
+        bridgeImage = toolkit.getImage(ClassLoader.getSystemResource("image/bridge.gif"));
+
+        mt.addImage(leftCarImage, LEFT_CAR_IMAGE_ID);
+        mt.addImage(rightCarImage, RIGHT_CAR_IMAGE_ID);
+        mt.addImage(bridgeImage, BRIDGE_IMAGE_ID);
 
         try {
-            mt.waitForID(0);
-            mt.waitForID(1);
-            mt.waitForID(2);
+            mt.waitForID(LEFT_CAR_IMAGE_ID);
+            mt.waitForID(RIGHT_CAR_IMAGE_ID);
+            mt.waitForID(BRIDGE_IMAGE_ID);
         } catch (java.lang.InterruptedException e) {
-            System.out.println("Couldn't load one of the images");
+            Log.info("Couldn't load one of the images");
         }
 
-        redCars.add(new Car(Car.REDCAR, null, redCar, null));
-        blueCars.add(new Car(Car.BLUECAR, null, blueCar, null));
-        setPreferredSize(new Dimension(bridge.getWidth(null), bridge.getHeight(null)));
+        leftCars.add(new Car(0, Car.LEFT_CAR, null, leftCarImage, null));
+        rightCars.add(new Car(0, Car.RIGHT_CAR, null, rightCarImage, null));
     }
 
+    private static Car getLastCar(ArrayList<? extends Car> carList) {
+        return carList.get(carList.size() - 1);
+    }
 
+    @Override
     public void paintComponent(Graphics g) {
-        g.drawImage(bridge, 0, 0, this);
-        for (Car c : redCars) c.draw(g);
-        for (Car c : blueCars) c.draw(g);
+        g.drawImage(bridgeImage, 0, 0, this);
+        for (Car leftCar : leftCars) leftCar.draw(g);
+        for (Car rightCar : rightCars) rightCar.draw(g);
     }
 
-    public void addCar(final int cartype) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                Car c;
-                if (cartype == Car.REDCAR) {
-                    c = new Car(cartype, redCars.get(redCars.size() - 1), redCar, controller);
-                    redCars.add(c);
-                } else {
-                    c = new Car(cartype, blueCars.get(blueCars.size() - 1), blueCar, controller);
-                    blueCars.add(c);
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(bridgeImage.getWidth(null), bridgeImage.getHeight(null));
+    }
+
+    void addCar(int cartype) {
+        SwingUtilities.invokeLater(() -> {
+            switch (cartype) {
+                case Car.LEFT_CAR -> {
+                    Car inFront = getLastCar(leftCars);
+                    leftCars.add(new Car(inFront.getId() + 1, Car.LEFT_CAR, inFront, leftCarImage, controller));
+
+                    new Thread(getLastCar(leftCars)).start();
                 }
-                new Thread(c).start();
+                case Car.RIGHT_CAR -> {
+                    Car inFront = getLastCar(rightCars);
+                    rightCars.add(new Car(inFront.getId() + 1, cartype, inFront, rightCarImage, controller));
+
+                    new Thread(getLastCar(rightCars)).start();
+                }
             }
         });
     }

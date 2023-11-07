@@ -1,47 +1,33 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.Serial;
 
-public class CarWindow extends JFrame {
+final class CarWindow extends JFrame {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    CarWorld display;
-    JButton addLeft;
-    JButton addRight;
 
-    public CarWindow() {
+    CarWindow(TrafficController controller) {
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout());
 
-        Container c = getContentPane();
+        CarWorld carWorldPanel = new CarWorld(controller);
 
-        c.setLayout(new BorderLayout());
-        display = new CarWorld();
+        contentPane.add("Center", carWorldPanel);
 
+        JButton addLeft = new JButton("Add Left");
+        JButton addRight = new JButton("Add Right");
+        addLeft.addActionListener(e -> carWorldPanel.addCar(Car.LEFT_CAR));
+        addRight.addActionListener(e -> carWorldPanel.addCar(Car.RIGHT_CAR));
 
-        c.add("Center", display);
-        addLeft = new JButton("Add Left");
-        addRight = new JButton("Add Right");
+        JPanel carWorldControlPanel = new JPanel();
+        carWorldControlPanel.setLayout(new FlowLayout());
+        carWorldControlPanel.add(addLeft);
+        carWorldControlPanel.add(addRight);
+        contentPane.add("South", carWorldControlPanel);
 
-        addLeft.addActionListener(new ActionListener() {
-                                      public void actionPerformed(ActionEvent e) {
-                                          display.addCar(Car.REDCAR);
-                                      }
-                                  }
-        );
-
-        addRight.addActionListener(new ActionListener() {
-                                       public void actionPerformed(ActionEvent e) {
-                                           display.addCar(Car.BLUECAR);
-                                       }
-                                   }
-        );
-
-
-        JPanel p1 = new JPanel();
-        p1.setLayout(new FlowLayout());
-        p1.add(addLeft);
-        p1.add(addRight);
-        c.add("South", p1);
+        pack();
+        setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 

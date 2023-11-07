@@ -8,7 +8,7 @@
  * implementations of this interface act as monitors to ensure that only one vehicle can pass the bridge at a time and
  * all other vehicles have to wait until the bridge is free again.
  */
-public interface TrafficController {
+interface TrafficController {
 
     /**
      * Makes the vehicle v from the left-hand side of the bridge enter.

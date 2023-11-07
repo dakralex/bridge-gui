@@ -14,7 +14,7 @@ The method `int getId()` returns the vehicle's identifier.
 
 ### Interface `TrafficRegistrar`
 
-`TrafficRegistrar` is the interfaces that defines abstract methods for capturing the traffic flow.
+`TrafficRegistrar` is the interface that defines abstract methods for capturing the traffic flow.
 
 The method `void registerLeft(Vehicle v)` registers the vehicle v from the left-hand side of the bridge.
 
