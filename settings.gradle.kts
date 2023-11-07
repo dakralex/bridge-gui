@@ -1,2 +1,2 @@
-rootProject.name = "BridgeGUI"
+rootProject.name = "bridge-gui"
 

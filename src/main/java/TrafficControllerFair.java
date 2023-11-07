@@ -19,7 +19,6 @@ public class TrafficControllerFair implements TrafficController {
 
     private final Lock lock = new ReentrantLock(true);
     private final Condition fullBridge = lock.newCondition();
-    private final Condition emptyBridge = lock.newCondition();
 
     private boolean vehicleOnBridge;
 
@@ -37,12 +36,11 @@ public class TrafficControllerFair implements TrafficController {
 
         try {
             while (vehicleOnBridge) {
-                emptyBridge.await();
+                fullBridge.await();
             }
 
             vehicleOnBridge = true;
             register.run();
-            fullBridge.signalAll();
         } finally {
             lock.unlock();
         }
@@ -52,13 +50,9 @@ public class TrafficControllerFair implements TrafficController {
         lock.lock();
 
         try {
-            while (!vehicleOnBridge) {
-                fullBridge.await();
-            }
-
             vehicleOnBridge = false;
             unregister.run();
-            emptyBridge.signalAll();
+            fullBridge.signalAll();
         } finally {
             lock.unlock();
         }

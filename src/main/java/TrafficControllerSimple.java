@@ -33,17 +33,9 @@ public class TrafficControllerSimple implements TrafficController {
 
         vehicleOnBridge = true;
         register.run();
-        notifyAll();
     }
 
     private synchronized void leave(Runnable unregister) {
-        while (!vehicleOnBridge) {
-            try {
-                wait();
-            } catch (InterruptedException ignored) {
-            }
-        }
-
         vehicleOnBridge = false;
         unregister.run();
         notifyAll();
