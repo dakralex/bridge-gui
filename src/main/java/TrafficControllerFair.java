@@ -31,7 +31,7 @@ public class TrafficControllerFair implements TrafficController {
         this.registrar = registrar;
     }
 
-    private void enter(Runnable register) throws InterruptedException {
+    private void enter(Runnable register) {
         lock.lock();
 
         try {
@@ -41,12 +41,13 @@ public class TrafficControllerFair implements TrafficController {
 
             vehicleOnBridge = true;
             register.run();
+        } catch (InterruptedException ignored) {
         } finally {
             lock.unlock();
         }
     }
 
-    private void leave(Runnable unregister) throws InterruptedException {
+    private void leave(Runnable unregister) {
         lock.lock();
 
         try {
@@ -60,33 +61,21 @@ public class TrafficControllerFair implements TrafficController {
 
     @Override
     public void enterLeft(Vehicle v) {
-        try {
-            enter(() -> registrar.registerLeft(v));
-        } catch (InterruptedException ignored) {
-        }
+        enter(() -> registrar.registerLeft(v));
     }
 
     @Override
     public void enterRight(Vehicle v) {
-        try {
-            enter(() -> registrar.registerRight(v));
-        } catch (InterruptedException ignored) {
-        }
+        enter(() -> registrar.registerRight(v));
     }
 
     @Override
     public void leaveLeft(Vehicle v) {
-        try {
-            leave(() -> registrar.deregisterLeft(v));
-        } catch (InterruptedException ignored) {
-        }
+        leave(() -> registrar.deregisterLeft(v));
     }
 
     @Override
     public void leaveRight(Vehicle v) {
-        try {
-            leave(() -> registrar.deregisterRight(v));
-        } catch (InterruptedException ignored) {
-        }
+        leave(() -> registrar.deregisterRight(v));
     }
 }
